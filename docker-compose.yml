@@ -4,8 +4,8 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - /root/app/data.sql:/docker-entrypoint-initdb.d/01-data.sql  # 🔥 ADICIONADO
-      - /root/app/init-database.sh:/docker-entrypoint-initdb.d/02-init-database.sh  # 🔥 ADICIONADO
+      - /root/app/data.sql:/docker-entrypoint-initdb.d/01-data.sql
+      - /root/app/init-database.sh:/docker-entrypoint-initdb.d/02-init-database.sh
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
@@ -13,7 +13,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d myapp_development"]  # 🔥 MELHORADO
+      test: ["CMD-SHELL", "pg_isready -U postgres -d myapp_development"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,6 +31,8 @@ services:
         bundle install &&
         echo '=== PREPARANDO DATABASE ===' &&
         bundle exec rails db:create db:migrate &&
+        echo '=== PRECOMPILANDO ASSETS ===' &&
+        bundle exec rails assets:precompile &&
         echo '=== VERIFICANDO DADOS ===' &&
         bundle exec rails runner 'puts \"Total fotos: #{Foto.count}\"' &&
         echo '=== INICIANDO SERVIDOR ===' &&
@@ -44,11 +46,10 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://postgres:postgres123@db:5432/myapp_development
+      DATABASE_URL: postgres://postgres:postgres123@db:5432/myapp_development
       RAILS_ENV: production
-      RAILS_SERVE_STATIC_FILES: "true"
-    stdin_open: true
-    tty: true
+      RAILS_SERVE_STATIC_FILES: true
+      SECRET_KEY_BASE: your-secret-key-base-here
 
 volumes:
   postgres_data:
