@@ -2,13 +2,12 @@ FROM ruby:3.2.2
 
 WORKDIR /app
 
-# Instala dependências do sistema (tudo em uma única instrução RUN)
+# Dependências do sistema para gems nativas
 RUN apt-get update -qq && \
     apt-get install -y \
         build-essential \
         libpq-dev \
-        libxml2-dev \
-        libxslt1-dev \
+        libxml2-dev libxslt1-dev \
         zlib1g-dev \
         nodejs \
         yarn \
@@ -16,13 +15,13 @@ RUN apt-get update -qq && \
         curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Copia Gemfile e Gemfile.lock primeiro (para cache)
+# Gemfile + Gemfile.lock para cache
 COPY Gemfile Gemfile.lock ./
 
 # Instala gems
 RUN bundle install
 
-# Copia todo o restante da aplicação
+# Copia o restante da aplicação
 COPY . .
 
 # Remove PID antigo
