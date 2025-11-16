@@ -17,20 +17,14 @@ services:
       retries: 5
 
   web:
-    image: ruby:3.2.2
+    image: ruby:3.2.3  # 🔥 MUDADO para 3.2.3
     restart: unless-stopped
     working_dir: /app
     command: >
       bash -c "
-        echo '=== VERIFICANDO FICHEIROS NO CONTAINER ===' &&
-        pwd && ls -la /app &&
         echo '=== INSTALANDO DEPENDÊNCIAS ===' &&
         apt-get update -qq &&
         apt-get install -y nodejs postgresql-client &&
-        echo '=== VERIFICANDO SE GEMFILE EXISTE ===' &&
-        [ -f Gemfile ] && echo 'GEMFILE ENCONTRADO' || echo 'GEMFILE NÃO ENCONTRADO' &&
-        echo '=== INSTALANDO BUNDLER ===' &&
-        gem install bundler -v 2.4.22 &&
         echo '=== INSTALANDO GEMS ===' &&
         bundle install &&
         echo '=== PREPARANDO DATABASE ===' &&
@@ -39,7 +33,7 @@ services:
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
     volumes:
-      - /root/app:/app  # 🔥 CAMINHO ABSOLUTO - GARANTIDO
+      - /root/app:/app
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
