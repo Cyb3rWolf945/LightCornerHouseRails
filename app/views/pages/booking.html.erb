@@ -1,0 +1,73 @@
+<!-- Banner Image -->
+<div class="w-full max-w-6xl mx-auto mt-4 rounded-2xl overflow-hidden">
+  <%= image_tag "Booking/tram.jpg", alt: "Lisbon Panorama", class: "w-full h-96 object-cover" %>
+</div>
+
+<!-- Título e frase -->
+<div class="pt-10 pb-2">
+  <h1 class="text-4xl font-normal text-center">Online Booking</h1>
+  <p class="text-center text-small text-gray-600 max-w-auto mx-auto">
+  Tell us a few details about your upcoming trip to Lisbon and we’ll get back to you as soon as we can with prices and availability.
+  </p>
+</div>
+
+
+<!-- Booking -->
+<div class="max-w-4xl mx-auto">
+
+  <%= form_with url: bookings_path, method: :post, local: true, class: "space-y-8" do |f| %>
+    <!-- Name -->
+    <div>
+      <%= f.label :nome, "Full Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+      <%= f.text_field :nome, required: true, placeholder: "Your full name", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+    </div>
+
+    <!-- Email -->
+    <div>
+      <%= f.label :email, "Email", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+      <%= f.email_field :email, required: true, placeholder: "your@email.com", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+    </div>
+
+    <!-- Selectable Room -->
+    <div>
+      <%= f.label :casa_id, "Room", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+      <%= f.select :casa_id, options_from_collection_for_select(@casas, :id, :titulo), { prompt: "Select a room" }, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+    </div>
+
+    <!-- Number of people -->
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <%= f.label :adultos, "Adults", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.number_field :adultos, min: 1, max: 10, value: 1, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+      <div>
+        <%= f.label :criancas, "Children", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.number_field :criancas, min: 0, max: 10, value: 0, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <%= f.label :data_inicio, "Check-in Date", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.date_field :data_inicio, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+      <div>
+        <%= f.label :data_fim, "Check-out Date", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.date_field :data_fim, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div>
+      <%= f.label :mensagem, "Message", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+      <%= f.text_area :mensagem, rows: 5, placeholder: "Write your message here...", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+    </div>
+
+    <div class="text-center">
+      <%= f.submit "Submit Booking", class: "cursor-pointer inline-block bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-orange-300 text-white font-semibold py-3 px-10 rounded-2xl shadow-lg transition" %>
+    </div>
+  <% end %>
+</div>
+
+

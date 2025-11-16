@@ -1,0 +1,12 @@
+<!-- app/views/booking_mailer/new_booking_email.html.erb -->
+
+<h1>New Booking Request</h1>
+
+<p><strong>Name:</strong> <%= @booking[:nome] %></p>
+<p><strong>Email:</strong> <%= @booking[:email] %></p>
+<p><strong>Room:</strong> <%= @booking[:casa] %></p>
+<p><strong>Adults:</strong> <%= @booking[:adultos] %></p>
+<p><strong>Children:</strong> <%= @booking[:criancas] %></p>
+<p><strong>Check-in:</strong> <%= @booking[:data_inicio] %></p>
+<p><strong>Check-out:</strong> <%= @booking[:data_fim] %></p>
+<p><strong>Message:</strong> <%= @booking[:mensagem].presence || "—" %></p>

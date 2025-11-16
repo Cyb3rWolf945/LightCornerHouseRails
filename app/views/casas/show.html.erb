@@ -1,0 +1,188 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-md mt-8">
+
+  <!-- Título do Quarto -->
+  <h1 class="text-5xl font-bold mb-6 text-center text-gray-900 tracking-tight">
+    <%= @casa.titulo %>
+  </h1>
+
+  <!-- Carrossel -->
+  <div id="carousel" class="relative rounded-xl overflow-hidden h-96 mb-10">
+    <div id="carousel-slides" class="relative w-full h-full">
+      <% @casa.fotos.each_with_index do |foto, index| %>
+        <img
+          src="<%= image_path(foto.imagem) %>"
+          class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out <%= 'opacity-100 z-10' if index == 0 %> <%= 'opacity-0 z-0' if index != 0 %>"
+          data-index="<%= index %>"
+          alt="Foto da casa <%= index + 1 %>"
+        />
+      <% end %>
+    </div>
+
+    <!-- Botões -->
+    <button
+      id="prev-slide"
+      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/70 hover:bg-white p-3 rounded-full shadow-md z-20"
+      aria-label="Anterior"
+    >
+      ‹
+    </button>
+    <button
+      id="next-slide"
+      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/70 hover:bg-white p-3 rounded-full shadow-md z-20"
+      aria-label="Próximo"
+    >
+      ›
+    </button>
+
+    <!-- Indicadores -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      <% @casa.fotos.each_with_index do |_, index| %>
+        <button
+          class="w-4 h-4 rounded-full bg-white opacity-50 hover:opacity-100 transition-all"
+          data-dot="<%= index %>"
+          aria-label="Ir para slide <%= index + 1 %>"
+        ></button>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Seção com duas colunas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Coluna 1: Informações -->
+    <div>
+      <h2 class="text-2xl font-semibold mb-4 text-gray-900">House information</h2>
+      <p class="text-gray-700 mb-4"><%= @casa.descricao %></p>
+
+      <div class="mb-4">
+        <span class="text-yellow-400 text-3xl font-bold">
+          <% rating = @casa.rating.to_i %>
+          <% 5.times do |i| %>
+            <% if i < rating %>
+              <span>★</span>
+            <% else %>
+              <span class="text-gray-300">★</span>
+            <% end %>
+          <% end %>
+        </span>
+      </div>
+
+      <p class="italic text-gray-600">
+        <strong>Location:</strong> <%= @casa.localizacao %>
+      </p>
+    </div>
+
+    <!-- Coluna 2: Mapa -->
+    <div class="rounded-xl overflow-hidden shadow-md h-80 md:h-full">
+      <!-- Exemplo de iframe Google Maps embed com localização da casa -->
+      <iframe
+        src="https://www.google.com/maps?q=<%= ERB::Util.url_encode(@casa.localizacao) %>&output=embed"
+        class="w-full h-full border-0"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Mapa da localização da casa"
+      ></iframe>
+    </div>
+
+  </div>
+
+
+  <!-- Booking -->
+  <div class="max-w-4xl mx-auto mt-8 p-8">
+  
+    <%= form_with url: bookings_path, method: :post, local: true, class: "space-y-8" do |f| %>
+      <!-- Name -->
+      <div>
+        <%= f.label :nome, "Full Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.text_field :nome, required: true, placeholder: "Your full name", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+  
+      <!-- Email -->
+      <div>
+        <%= f.label :email, "Email", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.email_field :email, required: true, placeholder: "your@email.com", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+  
+      <!-- Room (pre-selected and readonly) -->
+      <div>
+        <%= f.label :casa, "Room", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.text_field :casa, value: @casa.titulo, readonly: true, class: "w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-3 text-gray-700 cursor-not-allowed" %>
+        <%= f.hidden_field :casa_id, value: @casa.id %>
+      </div>
+  
+      <!-- Number of people -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <%= f.label :adultos, "Adults", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= f.number_field :adultos, min: 1, max: 10, value: 1, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+        </div>
+        <div>
+          <%= f.label :criancas, "Children", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= f.number_field :criancas, min: 0, max: 10, value: 0, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+        </div>
+      </div>
+  
+      <!-- Dates -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <%= f.label :data_inicio, "Start Date", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= f.date_field :data_inicio, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+        </div>
+        <div>
+          <%= f.label :data_fim, "End Date", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= f.date_field :data_fim, required: true, class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+        </div>
+      </div>
+  
+      <!-- Message -->
+      <div>
+        <%= f.label :mensagem, "Message", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.text_area :mensagem, rows: 5, placeholder: "Write your message here...", class: "w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-500 transition" %>
+      </div>
+  
+      <div class="text-center">
+        <%= f.submit "Submit Booking", class: "cursor-pointer inline-block bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-orange-300 text-white font-semibold py-3 px-10 rounded-2xl shadow-lg transition" %>
+      </div>
+    <% end %>
+  </div>
+  
+  
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll("#carousel-slides img");
+    const dots = document.querySelectorAll("[data-dot]");
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("opacity-100", i === index);
+        slide.classList.toggle("z-10", i === index);
+        slide.classList.toggle("opacity-0", i !== index);
+        slide.classList.toggle("z-0", i !== index);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("opacity-100", i === index);
+        dot.classList.toggle("opacity-50", i !== index);
+      });
+
+      current = index;
+    }
+
+    document.getElementById("prev-slide").addEventListener("click", () => {
+      showSlide((current - 1 + slides.length) % slides.length);
+    });
+
+    document.getElementById("next-slide").addEventListener("click", () => {
+      showSlide((current + 1) % slides.length);
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => showSlide(i));
+    });
+  });
+</script>

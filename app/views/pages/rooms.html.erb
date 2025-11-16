@@ -1,0 +1,43 @@
+<!-- Banner Image -->
+<div class="w-full max-w-6xl mx-auto mt-4 rounded-2xl overflow-hidden">
+  <%= image_tag "lisbon.png", alt: "Lisbon Panorama", class: "w-full object-cover" %>
+</div>
+
+<!-- Título e frase -->
+<div class="py-10">
+  <h1 class="text-4xl md:text-5xl font-semibold text-center mb-4">Rooms</h1>
+  <p class="text-center text-lg text-gray-600 max-w-2xl mx-auto">
+    Every room is designed with traditional Lisbon style and contemporary comfort.
+  </p>
+</div>
+
+<!-- Cards dos quartos -->
+<div class="max-w-6xl mx-auto flex flex-col gap-8 pb-20">
+
+  <% @casas.each do |casa| %>
+    <div class="bg-white rounded-2xl shadow-md flex flex-col md:flex-row overflow-hidden">
+      <div class="md:w-1/3 flex-shrink-0">
+        <%= image_tag casa.foto_destaque, alt: casa.titulo, class: "object-cover w-full h-72 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none" %>
+      </div>
+      <div class="md:w-2/3 flex flex-col justify-between p-6">
+        <div>
+          <h2 class="text-2xl font-semibold mb-2"><%= casa.titulo %></h2>
+          <p class="text-gray-700 mb-4 text-base"><%= casa.descricao %></p>
+        </div>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+ <%= link_to "EXPLORE NOW", casa_path(casa), class: "text-orange-500 border border-orange-500 px-4 py-2 rounded-lg font-medium hover:bg-orange-50 transition inline-block" %>          <div class="flex items-center gap-1 text-yellow-400 text-3xl">
+            <% rating = casa.rating.to_i %>
+            <% 5.times do |i| %>
+              <% if i < rating %>
+                <span>★</span>
+              <% else %>
+                <span class="text-gray-300">★</span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>

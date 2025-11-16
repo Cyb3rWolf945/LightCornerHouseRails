@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Lightcornerhouse</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= favicon_link_tag 'favicon.ico' %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'orange-400': '#fb923c',
+              'orange-500': '#f97316',
+              'orange-600': '#ea580c',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Flowbite JS for navbar toggle -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+      html {
+        scroll-behavior: smooth;
+        background-color: #ffffff;
+      }
+      body {
+        background-color: #ffffff;
+        color: #000000;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="bg-black sticky top-0 z-50">
+      <div class="max-w-screen-xl flex items-center justify-between mx-auto px-6 py-4">
+        <!-- Left side: Logo and Navigation -->
+        <div class="flex items-center space-x-8">
+          <!-- Logo -->
+          <%= link_to root_path, class: "flex items-center" do %>
+            <%= image_tag "logo.png", class: "h-16", alt: "Light Corner House Logo" %>
+          <% end %>
+          
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-8">
+            <%= link_to "Rooms", rooms_path, class: "text-white hover:text-gray-300 transition-colors" %>
+          </div>
+        </div>
+        
+        <!-- Right side controls -->
+        <div class="flex items-center space-x-4">
+          <!-- Book Now button -->
+          <%= link_to booking_path do %>
+            <button class="bg-orange-500 hover:bg-orange-600 text-black px-6 py-2 rounded-2xl font-normal transition-colors">
+              BOOK NOW
+            </button>
+          <% end %>
+          
+          <!-- Mobile menu button -->
+          <button data-collapse-toggle="navbar-mobile" type="button" 
+                  class="md:hidden inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600" 
+                  aria-controls="navbar-mobile" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile menu -->
+      <div class="hidden md:hidden" id="navbar-mobile">
+        <div class="px-2 pt-2 pb-3 space-y-1 bg-black border-t border-gray-800">
+          <%= link_to "Rooms", rooms_path, class: "block px-3 py-2 text-white hover:bg-gray-800 rounded-md" %>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <%= yield %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black w-full pt-10 pb-8 mt-12">
+      <div class="max-w-3xl mx-auto flex flex-col items-center text-white">
+        <!-- Logo -->
+        <div class="mb-6">
+          <%= image_tag "logo.png", class: "h-16 md:h-20 mx-auto", alt: "Logo Light Corner House" %>
+        </div>
+        <!-- Company Info -->
+        <div class="mb-6 text-center text-base">
+          Rua Bartolomeu da Costa 43, 1170-048 Lisboa, Portugal<br/>
+          lightcornerhouse@gmail.com<br/>
+          © Lisbon, Portugal, 2019. All rights reserved.
+        </div>
+        <!-- Legal and Book -->
+        <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-6">
+          <span class="text-sm">Aviso Legal</span>
+          <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener">
+            <%= image_tag "livro-reclamacoes.png", alt: "Livro de Reclamações", class: "h-12 w-auto" %>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
