@@ -19,18 +19,24 @@ services:
       retries: 5
 
   web:
-    image: ruby:3.2.2  # 🔥 Usa imagem Ruby diretamente
+    image: ruby:3.2.2
     restart: unless-stopped
-    working_dir: /app  # 🔥 Define working directory
+    working_dir: /app
     command: >
       bash -c "
-        apt-get update && apt-get install -y nodejs postgresql-client &&
+        echo '=== VERIFICANDO FICHEIROS ===' &&
+        pwd && ls -la &&
+        echo '=== INSTALANDO DEPENDÊNCIAS ===' &&
+        apt-get update -qq && apt-get install -y nodejs postgresql-client &&
+        echo '=== INSTALANDO GEMS ===' &&
         bundle install &&
+        echo '=== PREPARANDO DATABASE ===' &&
         bundle exec rails db:prepare &&
+        echo '=== INICIANDO SERVIDOR ===' &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
     volumes:
-      - .:/app  # 🔥 Agora funciona porque monta os ficheiros reais
+      - ./:/app  # 🔥 Garantir que monta a diretoria raiz
       - bundle_cache:/usr/local/bundle
     ports:
       - "127.0.0.1:3000:3000"
