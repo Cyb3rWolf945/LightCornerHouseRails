@@ -2,27 +2,16 @@ FROM ruby:3.2.2
 
 # Install dependencies
 RUN apt-get update -qq && \
-    apt-get install -y nodejs npm postgresql-client && \
-    npm install -g yarn && \
+    apt-get install -y nodejs postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy Gemfile first for better caching
+# Copy Gemfile first for caching
 COPY Gemfile Gemfile.lock ./
 
-# Debug: show what files are copied
-RUN echo "=== FILES IN /app ===" && \
-    ls -la && \
-    echo "=== GEMFILE CONTENT ===" && \
-    cat Gemfile && \
-    echo "=== INSTALLING GEMS ==="
-
-# Install gems with better error handling
-RUN bundle install --verbose || \
-    (echo "=== BUNDLE INSTALL FAILED ===" && \
-     cat Gemfile.lock && \
-     exit 1)
+# Install gems
+RUN bundle install
 
 # Copy application code
 COPY . .

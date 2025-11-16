@@ -19,20 +19,16 @@ services:
       retries: 5
 
   web:
-    image: ruby:3.2.2
+    build: 
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
-    working_dir: /app
     command: >
       bash -c "
-        apt-get update -qq &&
-        apt-get install -y nodejs postgresql-client &&
-        bundle install &&
         bundle exec rails db:prepare &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
+    # 🔥 SEM VOLUME para a app - código vem do Dockerfile
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -42,10 +38,8 @@ services:
       DATABASE_URL: postgresql://postgres:postgres123@db:5432/myapp_development
       RAILS_ENV: production
       RAILS_SERVE_STATIC_FILES: "true"
-      BUNDLE_PATH: /usr/local/bundle
     stdin_open: true
     tty: true
 
 volumes:
   postgres_data:
-  bundle_cache:
