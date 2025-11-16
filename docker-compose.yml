@@ -1,4 +1,4 @@
-services:
+kservices:
   db:
     image: postgres:15
     restart: always
@@ -22,21 +22,24 @@ services:
     working_dir: /app
     command: >
       bash -c "
-        # Install system dependencies
+        echo '=== VERIFICANDO FICHEIROS NO CONTAINER ===' &&
+        pwd && ls -la /app &&
+        echo '=== INSTALANDO DEPENDÊNCIAS ===' &&
         apt-get update -qq &&
         apt-get install -y nodejs postgresql-client &&
-        # Ensure bundler is installed
-        gem update --system &&
+        echo '=== VERIFICANDO SE GEMFILE EXISTE ===' &&
+        [ -f Gemfile ] && echo 'GEMFILE ENCONTRADO' || echo 'GEMFILE NÃO ENCONTRADO' &&
+        echo '=== INSTALANDO BUNDLER ===' &&
         gem install bundler -v 2.4.22 &&
-        # Install application gems
-        bundle install --jobs=4 --retry=3 &&
-        # Setup database
+        echo '=== INSTALANDO GEMS ===' &&
+        bundle install &&
+        echo '=== PREPARANDO DATABASE ===' &&
         bundle exec rails db:create db:migrate &&
-        # Start server
+        echo '=== INICIANDO SERVIDOR ===' &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
     volumes:
-      - .:/app
+      - /root/app:/app  # 🔥 CAMINHO ABSOLUTO - GARANTIDO
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
