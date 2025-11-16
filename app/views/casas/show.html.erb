@@ -10,7 +10,7 @@
     <div id="carousel-slides" class="relative w-full h-full">
       <% @casa.fotos.each_with_index do |foto, index| %>
         <img
-          src="/assets/houses/<%= foto.imagem %>.png"
+          src="/assets/<%= foto.imagem %>.png"
           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out <%= 'opacity-100 z-10' if index == 0 %> <%= 'opacity-0 z-0' if index != 0 %>"
           data-index="<%= index %>"
           alt="Foto da casa <%= index + 1 %>"
