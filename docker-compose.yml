@@ -19,15 +19,18 @@ services:
       retries: 5
 
   web:
-    build: .
+    image: ruby:3.2.2  # 🔥 Usa imagem Ruby diretamente
     restart: unless-stopped
+    working_dir: /app  # 🔥 Define working directory
     command: >
       bash -c "
+        apt-get update && apt-get install -y nodejs postgresql-client &&
+        bundle install &&
         bundle exec rails db:prepare &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
-    # 🔥 REMOVIDO: - .:/app (o código vem do build, não do volume)
     volumes:
+      - .:/app  # 🔥 Agora funciona porque monta os ficheiros reais
       - bundle_cache:/usr/local/bundle
     ports:
       - "127.0.0.1:3000:3000"
