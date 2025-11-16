@@ -17,15 +17,26 @@ services:
       retries: 5
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ruby:3.2.2
     restart: unless-stopped
+    working_dir: /app
     command: >
       bash -c "
+        # Install system dependencies
+        apt-get update -qq &&
+        apt-get install -y nodejs postgresql-client &&
+        # Ensure bundler is installed
+        gem update --system &&
+        gem install bundler -v 2.4.22 &&
+        # Install application gems
+        bundle install --jobs=4 --retry=3 &&
+        # Setup database
         bundle exec rails db:create db:migrate &&
+        # Start server
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
+    volumes:
+      - .:/app
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -35,6 +46,8 @@ services:
       DATABASE_URL: postgresql://postgres:postgres123@db:5432/myapp_development
       RAILS_ENV: production
       RAILS_SERVE_STATIC_FILES: "true"
+    stdin_open: true
+    tty: true
 
 volumes:
   postgres_data:
