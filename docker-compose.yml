@@ -24,19 +24,38 @@ services:
     working_dir: /app
     command: >
       bash -c "
-        echo '=== INSTALANDO DEPENDÊNCIAS ===' &&
-        apt-get update -qq &&
-        apt-get install -y nodejs postgresql-client &&
-        echo '=== INSTALANDO GEMS ===' &&
-        bundle install &&
-        echo '=== PREPARANDO DATABASE ===' &&
-        bundle exec rails db:create db:migrate &&
-        echo '=== PRECOMPILANDO ASSETS ===' &&
-        bundle exec rails assets:precompile &&
-        echo '=== VERIFICANDO DADOS ===' &&
-        bundle exec rails runner 'puts \"Total fotos: #{Foto.count}\"' &&
-        echo '=== INICIANDO SERVIDOR ===' &&
-        bundle exec rails server -b 0.0.0.0 -p 3000
+        # REMOVER SERVER.PID SEMPRE
+        rm -f /app/tmp/pids/server.pid
+        
+        # DEPENDÊNCIAS (só uma vez)
+        if [ ! -f /app/.dependencies_installed ]; then
+          echo '=== INSTALANDO DEPENDÊNCIAS ==='
+          apt-get update -qq
+          apt-get install -y nodejs postgresql-client
+          touch /app/.dependencies_installed
+        fi
+        
+        # GEMS (só uma vez)  
+        if [ ! -f /app/.gems_installed ]; then
+          echo '=== INSTALANDO GEMS ==='
+          bundle install
+          touch /app/.gems_installed
+        fi
+        
+        # DATABASE
+        echo '=== PREPARANDO DATABASE ==='
+        bundle exec rails db:create db:migrate
+        
+        # ASSETS (pulando por causa do erro)
+        echo '=== PULANDO ASSETS (ERRO TAILWIND) ==='
+        
+        # DADOS
+        echo '=== VERIFICANDO DADOS ==='
+        bundle exec rails runner 'puts \"Total fotos: #{Foto.count}\"'
+        
+        # SERVIDOR
+        echo '=== INICIANDO SERVIDOR ==='
+        exec bundle exec rails server -b 0.0.0.0 -p 3000
       "
     volumes:
       - /root/app:/app
