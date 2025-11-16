@@ -4,14 +4,14 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./data.sql:/docker-entrypoint-initdb.d/01-data.sql  # 🔄 Mudei o caminho
-      - ./init-database.sh:/docker-entrypoint-initdb.d/02-init-database.sh  # 🔄 Mudei o caminho
+      - ./data.sql:/docker-entrypoint-initdb.d/01-data.sql
+      - ./init-database.sh:/docker-entrypoint-initdb.d/02-init-database.sh
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
       POSTGRES_DB: myapp_development
     ports:
-      - "127.0.0.1:5432:5432"  # ✅ Já está correto
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d myapp_development"]
       interval: 10s
@@ -20,20 +20,24 @@ services:
 
   web:
     build: .
-    restart: always
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p 3000"
+    restart: unless-stopped
+    command: >
+      bash -c "
+        bundle exec rails db:prepare &&
+        bundle exec rails server -b 0.0.0.0 -p 3000
+      "
+    # 🔥 REMOVIDO: - .:/app (o código vem do build)
     volumes:
-      - .:/app
       - bundle_cache:/usr/local/bundle
     ports:
-      - "127.0.0.1:3000:3000"  # 🔥 MUDANÇA CRÍTICA: Apenas localhost
+      - "127.0.0.1:3000:3000"
     depends_on:
       db:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:postgres123@db:5432/myapp_development
-      RAILS_ENV: production  # 🔥 MUDANÇA: development → production
-      RAILS_SERVE_STATIC_FILES: "true"  # 🔥 NOVO: Para servir assets
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "true"
       BUNDLE_PATH: /usr/local/bundle
     stdin_open: true
     tty: true
