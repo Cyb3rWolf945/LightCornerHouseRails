@@ -19,18 +19,20 @@ services:
       retries: 5
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ruby:3.2.2
     restart: unless-stopped
+    working_dir: /app
     command: >
       bash -c "
+        apt-get update -qq &&
+        apt-get install -y nodejs postgresql-client &&
+        bundle install &&
         bundle exec rails db:prepare &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
-    # SEM volume para a app - o código vem do build Dockerfile
     volumes:
-      - bundle_cache:/usr/local/bundle  # Apenas cache de gems
+      - .:/app
+      - bundle_cache:/usr/local/bundle
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

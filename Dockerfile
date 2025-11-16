@@ -10,7 +10,19 @@ WORKDIR /app
 
 # Copy Gemfile first for better caching
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+
+# Debug: show what files are copied
+RUN echo "=== FILES IN /app ===" && \
+    ls -la && \
+    echo "=== GEMFILE CONTENT ===" && \
+    cat Gemfile && \
+    echo "=== INSTALLING GEMS ==="
+
+# Install gems with better error handling
+RUN bundle install --verbose || \
+    (echo "=== BUNDLE INSTALL FAILED ===" && \
+     cat Gemfile.lock && \
+     exit 1)
 
 # Copy application code
 COPY . .
