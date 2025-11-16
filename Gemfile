@@ -23,7 +23,7 @@ gem "turbo-rails"
 # Adicione esta linha em qualquer lugar (sugiro após a linha do sprockets-rails)
 gem "sassc-rails"
 
-gem "tailwindcss-rails"
+gem "tailwindcss-rails", "~> 3.3.0"
 
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
