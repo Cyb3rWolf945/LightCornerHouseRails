@@ -19,25 +19,18 @@ services:
       retries: 5
 
   web:
-    image: ruby:3.2.2
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
-    working_dir: /app
     command: >
       bash -c "
-        echo '=== VERIFICANDO FICHEIROS ===' &&
-        pwd && ls -la &&
-        echo '=== INSTALANDO DEPENDÊNCIAS ===' &&
-        apt-get update -qq && apt-get install -y nodejs postgresql-client &&
-        echo '=== INSTALANDO GEMS ===' &&
-        bundle install &&
-        echo '=== PREPARANDO DATABASE ===' &&
         bundle exec rails db:prepare &&
-        echo '=== INICIANDO SERVIDOR ===' &&
         bundle exec rails server -b 0.0.0.0 -p 3000
       "
+    # SEM volume para a app - o código vem do build Dockerfile
     volumes:
-      - ./:/app  # 🔥 Garantir que monta a diretoria raiz
-      - bundle_cache:/usr/local/bundle
+      - bundle_cache:/usr/local/bundle  # Apenas cache de gems
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

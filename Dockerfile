@@ -1,22 +1,24 @@
-FROM ruby:3.2.3
+FROM ruby:3.2.2
 
-# Instalar dependências do sistema
-RUN apt-get update -qq && apt-get install -y \
-    nodejs \
-    npm \
-    postgresql-client \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies
+RUN apt-get update -qq && \
+    apt-get install -y nodejs npm postgresql-client && \
+    npm install -g yarn && \
+    rm -rf /var/lib/apt/lists/*
 
-# Instalar Yarn
-RUN npm install -g yarn
-
-# Criar diretório da aplicação
 WORKDIR /app
 
-# Expor porta 3000
+# Copy Gemfile first for better caching
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p tmp/pids
+
 EXPOSE 3000
 
-# Comando padrão (será sobrescrito pelo docker-compose)
-CMD ["bash"]
+# Start the server
+CMD ["rails", "server", "-b", "0.0.0.0"]
