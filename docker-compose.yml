@@ -27,6 +27,10 @@ services:
         # REMOVER SERVER.PID SEMPRE
         rm -f /app/tmp/pids/server.pid
         
+        # CONFIGURAR BUNDLE PATH
+        export BUNDLE_PATH=/app/vendor/bundle
+        export BUNDLE_APP_CONFIG=/app/.bundle
+        
         # DEPENDÊNCIAS (só uma vez)
         if [ ! -f /app/.dependencies_installed ]; then
           echo '=== INSTALANDO DEPENDÊNCIAS ==='
@@ -35,19 +39,13 @@ services:
           touch /app/.dependencies_installed
         fi
         
-        # GEMS (só uma vez)  
-        if [ ! -f /app/.gems_installed ]; then
-          echo '=== INSTALANDO GEMS ==='
-          bundle install
-          touch /app/.gems_installed
-        fi
+        # GEMS (sempre verificar)  
+        echo '=== INSTALANDO/VERIFICANDO GEMS ==='
+        bundle install --path vendor/bundle
         
         # DATABASE
         echo '=== PREPARANDO DATABASE ==='
         bundle exec rails db:create db:migrate
-        
-        # ASSETS (pulando por causa do erro)
-        echo '=== PULANDO ASSETS (ERRO TAILWIND) ==='
         
         # DADOS
         echo '=== VERIFICANDO DADOS ==='
@@ -68,7 +66,8 @@ services:
       DATABASE_URL: postgres://postgres:postgres123@db:5432/myapp_development
       RAILS_ENV: production
       RAILS_SERVE_STATIC_FILES: true
-      SECRET_KEY_BASE: your-secret-key-base-here
+      BUNDLE_PATH: /app/vendor/bundle
+      BUNDLE_APP_CONFIG: /app/.bundle
 
 volumes:
   postgres_data:
