@@ -33,6 +33,7 @@ Rails.application.configure do
 
 config.hosts << "lightcornerhouse.com"
 config.hosts << "www.lightcornerhouse.com"
+config.hosts << "85.31.238.11"
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
