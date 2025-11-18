@@ -43,6 +43,11 @@ services:
         echo '=== INSTALANDO/VERIFICANDO GEMS ==='
         bundle install --path vendor/bundle
         
+        # CONFIGURAR ASSETS SEM DIGEST
+        echo '=== CONFIGURANDO ASSETS SEM DIGEST ==='
+        sed -i 's/config.assets.digest = true/config.assets.digest = false/g' /app/config/environments/production.rb
+        sed -i 's/config.assets.compile = false/config.assets.compile = true/g' /app/config/environments/production.rb
+        
         # DATABASE
         echo '=== PREPARANDO DATABASE ==='
         bundle exec rails db:create db:migrate
